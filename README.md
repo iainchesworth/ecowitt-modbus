@@ -54,3 +54,10 @@ Software-based tests run against an in-memory mock Modbus backend (via `modbus-c
 Run `script/run_checks.sh` before opening a pull request -- it mirrors the CI workflow (formatting, lint, compile, tests, build) in one command. `script/format_code.sh` applies formatting and safe lint fixes only. `script/query.py` is a standalone CLI for querying a real WS90 over TCP or serial; run it with `--help` for usage.
 
 Contributions target the `develop` branch; `main` only ever receives fast-forwards from `develop` (enforced in CI).
+
+## Related projects
+
+This library is one of three repositories for WS90 support in Home Assistant:
+
+* [`ha-ecowitt-ws90`](https://github.com/iainchesworth/ha-ecowitt-ws90) -- a HACS-installable custom integration, vendoring this library.
+* [`ha-core-ws90`](https://github.com/iainchesworth/ha-core-ws90) -- a `home-assistant/core` fork adding this as a built-in integration (branch `ecowitt-ws90-integration`).
