@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Apache-2.0" }
 authors = [{ name = "ecowitt-modbus contributors" }]
-keywords = ["modbus", "ecowitt", "fine-offset", "ws90", "wn69lp", "weather", "home-assistant"]
+keywords = ["modbus", "ecowitt", "fine-offset", "wn90lp", "wn69lp", "ws90", "weather", "home-assistant"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Home Automation",

@@ -26,7 +26,7 @@ from modbus_connection.cli_helper import (
     print_component,
 )
 
-from ecowitt_modbus import SUPPORTED_MODELS, WS90, EcowittDevice, NotThisDeviceError
+from ecowitt_modbus import SUPPORTED_MODELS, WN90LP, EcowittDevice, NotThisDeviceError
 
 # These sensors only ever speak RTU framing, whether carried over TCP (a
 # transparent serial gateway, the common bridge for them) or a direct serial
@@ -40,8 +40,8 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--model",
         choices=sorted(SUPPORTED_MODELS),
-        default=WS90.MODEL,
-        help=f"sensor model to read (default: {WS90.MODEL})",
+        default=WN90LP.MODEL,
+        help=f"sensor model to read (default: {WN90LP.MODEL})",
     )
     parser.add_argument(
         "--unit",
@@ -52,7 +52,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--history",
         action="store_true",
-        help="also read the WS90's 30 minutes of archived per-minute readings",
+        help="also read the WN90LP's 30 minutes of archived per-minute readings",
     )
     return parser.parse_args(argv)
 
@@ -60,12 +60,12 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 async def _read(device: EcowittDevice, args: argparse.Namespace) -> None:
     """Read everything the chosen model can report."""
     await device.async_probe()
-    if isinstance(device, WS90):
+    if isinstance(device, WN90LP):
         if args.history:
             await device.async_update_history()
     elif args.history:
         print(
-            f"--history is a WS90 feature; {device.MODEL} archives nothing.",
+            f"--history is a WN90LP feature; {device.MODEL} archives nothing.",
             file=sys.stderr,
         )
 
@@ -99,7 +99,7 @@ async def _run(args: argparse.Namespace) -> int:
     print_component(device.info, title="Device")  # type: ignore[attr-defined]
     print()
     print_component(device.sensors, title="Live readings")  # type: ignore[attr-defined]
-    if args.history and isinstance(device, WS90):
+    if args.history and isinstance(device, WN90LP):
         print()
         print_component(device.history, title="History (last 30 minutes)")
     print(f"\nQueried in {elapsed * 1000:.0f} ms ({counting.reads} Modbus reads)")

@@ -40,7 +40,7 @@ class NotThisDeviceError(EcowittDeviceError):
 class EcowittDevice(ABC):
     """One Fine Offset / Ecowitt sensor reachable over Modbus."""
 
-    #: Model name as printed on the device, e.g. ``"WS90"``.
+    #: Model name as printed on the device, e.g. ``"WN90LP"``.
     MODEL: ClassVar[str]
 
     #: The device (slave) address this model ships with.

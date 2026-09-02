@@ -11,8 +11,8 @@ from __future__ import annotations
 # Raw holding-register words keyed by their (protocol) address. Reproduces
 # Example 2 of Ecowitt's WS90ModbusRTU_V1.0.6 spec verbatim for the live
 # block, plus that spec's own worked example for the rain counter register.
-WS90_LIVE_EXAMPLE: dict[int, int] = {
-    0x160: 0x90,  # device_code -> model "WS90"
+WN90LP_LIVE_EXAMPLE: dict[int, int] = {
+    0x160: 0x90,  # device_code -> model "WN90LP"
     0x161: 2,  # baud_rate -> BAUD_9600
     0x162: 0x90,  # device_address (factory default)
     0x163: 0x1234,  # device_id MSB
@@ -29,8 +29,8 @@ WS90_LIVE_EXAMPLE: dict[int, int] = {
     0x16E: 18,  # rain_counter -> 0.18 mm
 }
 
-#: A WS90's factory-default device (slave) address, matching WS90_LIVE_EXAMPLE.
-WS90_UNIT_ID = 0x90
+#: A WN90LP's factory-default device (slave) address, matching WN90LP_LIVE_EXAMPLE.
+WN90LP_UNIT_ID = 0x90
 
 # Reproduces Example 1 of Ecowitt's WN69LP Modbus RTU V1.0.2 spec verbatim
 # for the live block (0x180-0x18B), with the configuration block set to the

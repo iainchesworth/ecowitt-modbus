@@ -13,19 +13,23 @@ The library was developed as the backend for a corresponding Home Assistant inte
 
 | Device | Specification | Default address | Comments |
 | :----- | :------------ | :-------------- | :------- |
-| Fine Offset / Ecowitt WS90 | Modbus RTU V1.0.6 | `0x90` (144) | All-in-one weather sensor array with no moving parts (light, UV, temperature, humidity, wind, rain, pressure) |
-| Fine Offset / Ecowitt WN69LP | Modbus RTU V1.0.2 | `0x24` (36) | Wired RS485 7-in-1 sensor array with a mechanical anemometer and tipping-bucket rain gauge |
+| Fine Offset / Ecowitt WN90LP | Modbus RTU V1.0.6 | `0x90` (144) | All-in-one weather sensor array with no moving parts (light, UV, temperature, humidity, wind, rain, pressure) |
+| Fine Offset / Ecowitt WN69LP | Modbus RTU V1.0.2 | `0x24` (36) | 7-in-1 sensor array with a mechanical anemometer and tipping-bucket rain gauge |
 
-The two devices share almost no register layout. They are modelled separately and only present a common interface, not common internals.
+Both are the wired RS-485 members of the Ecowitt range. The `LP` models are the ones with a Modbus interface; their wireless counterparts (the WS90 and WS69, which report to an Ecowitt gateway instead) have none and are not addressable here.
+
+If you are looking for the **WS90**: the WN90LP is its wired version — the same sensor with the solar panel replaced by an RS-485 connection. Ecowitt originally published its Modbus specification as `WS90ModbusRTU` and has since renamed it to `WN90LP ModbusRTU`, with the register map unchanged.
+
+The two supported devices share almost no register layout. They are modelled separately and only present a common interface, not common internals.
 
 ## Usage
 
 Construct the model you have with a [`modbus_connection.ModbusUnit`](https://github.com/home-assistant-libs/modbus-connection), confirm the right device answered, then poll it:
 
 ```python
-from ecowitt_modbus import WS90
+from ecowitt_modbus import WN90LP
 
-device = WS90(unit)
+device = WN90LP(unit)
 await device.async_probe()
 await device.async_update()
 
@@ -47,7 +51,7 @@ device = SUPPORTED_MODELS["WN69LP"](unit)
 
 Every supported model reports light, UV index, temperature, humidity, wind speed, gust speed, wind direction, rainfall, and absolute pressure. Beyond that they differ:
 
-| | WS90 | WN69LP |
+| | WN90LP | WN69LP |
 | :-- | :--- | :----- |
 | Rainfall resolution | 0.1mm, plus a 0.01mm counter | 0.254mm (0.01in tipping bucket) |
 | UV index encoding | tenths | whole numbers |
@@ -58,7 +62,7 @@ Every supported model reports light, UV index, temperature, humidity, wind speed
 
 Both models also expose their RS-485 settings, and accept validated writes to the two settable identity registers (baud rate and device address).
 
-The WS90's history block is 330 registers wide and changes once a minute, so it is polled separately from the live readings:
+The WN90LP's history block is 330 registers wide and changes once a minute, so it is polled separately from the live readings:
 
 ```python
 await device.async_update_history()
@@ -69,16 +73,16 @@ print(device.history.battery_voltage)
 
 The two models differ in how confidently a caller can tell what it is talking to, which matters for any application that needs to recognise a device again later:
 
-- The **WS90** reports a fixed device code and a 32-bit device ID. `async_probe()` is a positive identification, and `device.serial_number` is stable across changes of host, port, and device address.
+- The **WN90LP** reports a fixed device code and a 32-bit device ID. `async_probe()` is a positive identification, and `device.serial_number` is stable across changes of host, port, and device address.
 - The **WN69LP** reports neither. `device.serial_number` is always `None`, and `async_probe()` can only reject a responder whose readings fall outside the physical ranges the specification documents (for example over 100% humidity). That rules out most unrelated devices, but it cannot distinguish a WN69LP from another device whose registers happen to decode plausibly at the same addresses.
 
 ## Scope
 
-The library reads live weather readings, RS-485 communication settings, and — on the WS90 — the 30-minute rolling history the sensor archives internally.
+The library reads live weather readings, RS-485 communication settings, and — on the WN90LP — the 30-minute rolling history the sensor archives internally.
 
 It does not implement:
 
-- the WS90's "on-demand measurement" command registers (`0x9C92`-`0x9C9A`), which duplicate the live readings with tighter timing at the cost of a write-then-wait-then-read sequence,
+- the WN90LP's "on-demand measurement" command registers (`0x9C92`-`0x9C9A`), which duplicate the live readings with tighter timing at the cost of a write-then-wait-then-read sequence,
 - the WN69LP's automatic reporting mode (register `0x162`), which has the device push readings unprompted rather than answer polls,
 - either device's write-only command registers (rainfall reset, software reset),
 - the recovery command that reads or sets the baud rate and address when they are unknown, which is a non-Modbus framed exchange.
@@ -87,7 +91,7 @@ The library does **not** create or own the Modbus transport. Applications provid
 
 ## Testing and validation
 
-Decode logic (scale, offset, and invalid-value handling) is cross-checked against the manufacturers' own worked examples in the WS90 Modbus RTU V1.0.6 and WN69LP Modbus RTU V1.0.2 specifications. The WS90 model is additionally verified against a live sensor.
+Decode logic (scale, offset, and invalid-value handling) is cross-checked against the manufacturers' own worked examples in the WS90 Modbus RTU V1.0.6 and WN69LP Modbus RTU V1.0.2 specifications. The WN90LP model is additionally verified against a live sensor.
 
 Software tests run against an in-memory mock Modbus backend (via `modbus-connection`'s pytest plugin) — no real device or server is needed to run the test suite. The register images those tests use are exported as `ecowitt_modbus.testing` so consuming applications can reuse them.
 

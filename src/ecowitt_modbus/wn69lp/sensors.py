@@ -23,7 +23,7 @@ class Sensors(Component):
     """The WN69LP's live weather readings."""
 
     light = gauge(0x180, 10, signed=False, nan=_INVALID, unit="lx")
-    # Reported as a whole number, unlike the WS90's tenths.
+    # Reported as a whole number, unlike the WN90LP's tenths.
     uv_index = integer(0x181, signed=False, nan=_INVALID)
     temperature = gauge(0x182, 0.1, offset=-40, signed=False, nan=_INVALID, unit="°C")
     humidity = integer(0x183, signed=False, nan=_INVALID, unit="%")
@@ -33,7 +33,7 @@ class Sensors(Component):
     # Cumulative since the last "clear rainfall" command (register 0x164).
     rainfall = gauge(0x187, _MM_PER_TIP, signed=False, unit="mm")
     absolute_pressure = gauge(0x188, 0.1, signed=False, nan=_INVALID, unit="hPa")
-    # The WS90 archives these two in its history block instead; here they are
+    # The WN90LP archives these two in its history block instead; here they are
     # live registers, re-measured every 60s.
     battery_voltage = gauge(0x189, 0.01, signed=False, nan=_INVALID, unit="V")
     supply_voltage = gauge(0x18A, 0.1, signed=False, nan=_INVALID, unit="V")

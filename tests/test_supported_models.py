@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 from modbus_connection.mock import MockModbusUnit
 
-from ecowitt_modbus import SUPPORTED_MODELS, WN69LP, WS90, EcowittDevice
+from ecowitt_modbus import SUPPORTED_MODELS, WN69LP, WN90LP, EcowittDevice
 
 MODELS = pytest.mark.parametrize(
     "model", SUPPORTED_MODELS.values(), ids=lambda m: str(m.MODEL)
@@ -24,8 +24,8 @@ def test_every_model_is_registered_under_its_own_name() -> None:
 
 def test_the_registry_holds_the_models_this_library_documents() -> None:
     """A deliberate tripwire: adding a model should be a visible diff here."""
-    assert set(SUPPORTED_MODELS) == {"WS90", "WN69LP"}
-    assert SUPPORTED_MODELS["WS90"] is WS90
+    assert set(SUPPORTED_MODELS) == {"WN90LP", "WN69LP"}
+    assert SUPPORTED_MODELS["WN90LP"] is WN90LP
     assert SUPPORTED_MODELS["WN69LP"] is WN69LP
 
 

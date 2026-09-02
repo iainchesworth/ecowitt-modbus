@@ -26,8 +26,8 @@ async def test_decodes_the_specs_worked_example(wn69lp: WN69LP) -> None:
     assert wn69lp.sensors.recent_rainfall == pytest.approx(1.27)
 
 
-async def test_uv_index_is_not_scaled_like_the_ws90s(wn69lp: WN69LP) -> None:
-    """The WS90 reports tenths here; the WN69LP reports whole numbers.
+async def test_uv_index_is_not_scaled_like_the_wn90lps(wn69lp: WN69LP) -> None:
+    """The WN90LP reports tenths here; the WN69LP reports whole numbers.
 
     Getting this wrong would silently report a tenth of the real UV index,
     so it is pinned separately from the worked example above.

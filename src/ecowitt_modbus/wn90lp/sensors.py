@@ -1,4 +1,4 @@
-"""Live weather readings from the WS90 sensor array.
+"""Live weather readings from the WN90LP sensor array.
 
 Registers 0x165-0x16E, refreshed by the manufacturer every 8.75s (light, UV,
 temperature, humidity, rainfall, absolute pressure) or every 2s (wind speed,
@@ -19,7 +19,7 @@ _INVALID = 0xFFFF
 
 
 class Sensors(Component):
-    """The WS90's live weather readings."""
+    """The WN90LP's live weather readings."""
 
     light = gauge(0x165, 10, signed=False, nan=_INVALID, unit="lx")
     uv_index = gauge(0x166, 0.1, signed=False, nan=_INVALID)

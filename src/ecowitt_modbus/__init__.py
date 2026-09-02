@@ -3,7 +3,7 @@
 Construct the model you have with a ``modbus_connection.ModbusUnit``, probe
 it once to confirm the right device answered, then poll it::
 
-    device = WS90(unit)
+    device = WN90LP(unit)
     await device.async_probe()
     await device.async_update()
 
@@ -22,12 +22,12 @@ same readings -- see each model's ``sensors`` component for what it measures.
 from .const import MANUFACTURER, BaudRate
 from .device import EcowittDevice, EcowittDeviceError, NotThisDeviceError
 from .wn69lp import WN69LP
-from .ws90 import WS90
+from .wn90lp import WN90LP
 
 #: Every model this library can talk to, keyed by the name printed on the
 #: device. Callers that offer a model picker should drive it from this.
 SUPPORTED_MODELS: dict[str, type[EcowittDevice]] = {
-    WS90.MODEL: WS90,
+    WN90LP.MODEL: WN90LP,
     WN69LP.MODEL: WN69LP,
 }
 
@@ -35,7 +35,7 @@ __all__ = [
     "MANUFACTURER",
     "SUPPORTED_MODELS",
     "WN69LP",
-    "WS90",
+    "WN90LP",
     "BaudRate",
     "EcowittDevice",
     "EcowittDeviceError",

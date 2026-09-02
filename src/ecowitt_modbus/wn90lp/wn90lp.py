@@ -1,4 +1,4 @@
-"""The WS90 as a single Modbus device object."""
+"""The WN90LP as a single Modbus device object."""
 
 from __future__ import annotations
 
@@ -15,14 +15,14 @@ if TYPE_CHECKING:
     from modbus_connection import ModbusUnit
 
 
-class WS90(EcowittDevice):
-    """A Fine Offset / Ecowitt WS90 weather sensor array on Modbus."""
+class WN90LP(EcowittDevice):
+    """A Fine Offset / Ecowitt WN90LP weather sensor array on Modbus."""
 
-    MODEL: ClassVar[str] = "WS90"
+    MODEL: ClassVar[str] = "WN90LP"
     DEFAULT_UNIT_ID: ClassVar[int] = 0x90
 
     def __init__(self, unit: ModbusUnit) -> None:
-        """Model the WS90 answering on ``unit``."""
+        """Model the WN90LP answering on ``unit``."""
         super().__init__(unit)
         self._info = DeviceInfo(unit)
         self._sensors = Sensors(unit)
@@ -33,18 +33,18 @@ class WS90(EcowittDevice):
 
     @property
     def info(self) -> DeviceInfo:
-        """The WS90's identity and RS-485 communication settings."""
+        """The WN90LP's identity and RS-485 communication settings."""
         return self._info
 
     @property
     def sensors(self) -> Sensors:
-        """The WS90's live weather readings."""
+        """The WN90LP's live weather readings."""
         return self._sensors
 
     async def async_probe(self) -> None:
-        """Confirm a WS90 answers, by reading its fixed device code.
+        """Confirm a WN90LP answers, by reading its fixed device code.
 
-        Register 0x160 reads back a constant 0x90 on a WS90, so unlike some
+        Register 0x160 reads back a constant 0x90 on a WN90LP, so unlike some
         models this is a positive identification rather than a plausibility
         check.
 
@@ -54,7 +54,7 @@ class WS90(EcowittDevice):
         await self.async_update()
         if self.info.device_code != DEVICE_CODE:
             raise NotThisDeviceError(
-                f"expected a WS90 (device code 0x{DEVICE_CODE:02x}) but the "
+                f"expected a WN90LP (device code 0x{DEVICE_CODE:02x}) but the "
                 f"device reports {self.info.model}"
             )
 
@@ -78,7 +78,7 @@ class WS90(EcowittDevice):
 
     @property
     def serial_number(self) -> str | None:
-        """The WS90's device ID, stable across host/port/address changes."""
+        """The WN90LP's device ID, stable across host/port/address changes."""
         if (device_id := self.info.device_id) is None:
             return None
         return f"{device_id:08x}"

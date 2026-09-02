@@ -43,7 +43,7 @@ class WN69LP(EcowittDevice):
     async def async_probe(self) -> None:
         """Check the readings at 0x180 are consistent with a WN69LP.
 
-        The WN69LP reports no model or serial register, so unlike the WS90
+        The WN69LP reports no model or serial register, so unlike the WN90LP
         there is nothing to identify positively against. What this can do is
         reject a responder whose readings fall outside the physical ranges
         the specification documents -- a real sensor cannot report 130%

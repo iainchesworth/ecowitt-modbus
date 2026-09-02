@@ -1,6 +1,6 @@
 """Configuration and firmware registers of the WN69LP.
 
-Unlike the WS90, the WN69LP has no model or serial-number register: nothing
+Unlike the WN90LP, the WN69LP has no model or serial-number register: nothing
 here identifies the device as a WN69LP, and nothing survives a change of
 device address. Everything in this block is settable.
 """

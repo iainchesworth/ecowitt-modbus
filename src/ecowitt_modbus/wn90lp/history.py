@@ -1,4 +1,4 @@
-"""Rolling 30-minute per-minute history archived by the WS90.
+"""Rolling 30-minute per-minute history archived by the WN90LP.
 
 Registers 0x9B14-0x9C5D (added in Modbus RTU spec v1.0.6). Each of the 11
 parameters below is its own contiguous run of 30 registers, one sample per

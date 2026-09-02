@@ -15,8 +15,8 @@ from modbus_connection.pytest_plugin import (
     mock_modbus_unit as mock_modbus_unit,
 )
 
-from ecowitt_modbus import WN69LP, WS90
-from ecowitt_modbus.testing import WN69LP_LIVE_EXAMPLE, WS90_LIVE_EXAMPLE
+from ecowitt_modbus import WN69LP, WN90LP
+from ecowitt_modbus.testing import WN69LP_LIVE_EXAMPLE, WN90LP_LIVE_EXAMPLE
 
 
 @pytest.fixture
@@ -30,10 +30,10 @@ def unit(mock_modbus_unit: MockModbusUnit) -> MockModbusUnit:
 
 
 @pytest.fixture
-def ws90(unit: MockModbusUnit) -> WS90:
-    """A WS90 over the mock unit, preloaded with device values."""
-    unit.holding.update(WS90_LIVE_EXAMPLE)
-    return WS90(unit)
+def wn90lp(unit: MockModbusUnit) -> WN90LP:
+    """A WN90LP over the mock unit, preloaded with device values."""
+    unit.holding.update(WN90LP_LIVE_EXAMPLE)
+    return WN90LP(unit)
 
 
 @pytest.fixture
