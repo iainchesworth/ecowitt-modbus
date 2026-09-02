@@ -24,12 +24,22 @@ class WS90(EcowittDevice):
     def __init__(self, unit: ModbusUnit) -> None:
         """Model the WS90 answering on ``unit``."""
         super().__init__(unit)
-        self.info = DeviceInfo(unit)
-        self.sensors = Sensors(unit)
+        self._info = DeviceInfo(unit)
+        self._sensors = Sensors(unit)
         self.history = History(unit)
         # Identity (5 registers) and live readings (10 registers) sit right
         # next to each other on the device -- pool them into one read.
-        self._live = ComponentGroup(unit, [self.info, self.sensors])
+        self._live = ComponentGroup(unit, [self._info, self._sensors])
+
+    @property
+    def info(self) -> DeviceInfo:
+        """The WS90's identity and RS-485 communication settings."""
+        return self._info
+
+    @property
+    def sensors(self) -> Sensors:
+        """The WS90's live weather readings."""
+        return self._sensors
 
     async def async_probe(self) -> None:
         """Confirm a WS90 answers, by reading its fixed device code.

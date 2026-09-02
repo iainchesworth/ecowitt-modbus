@@ -26,9 +26,19 @@ class WN69LP(EcowittDevice):
     def __init__(self, unit: ModbusUnit) -> None:
         """Model the WN69LP answering on ``unit``."""
         super().__init__(unit)
-        self.info = DeviceInfo(unit)
+        self._info = DeviceInfo(unit)
+        self._sensors = Sensors(unit)
         self.firmware = FirmwareVersion(unit)
-        self.sensors = Sensors(unit)
+
+    @property
+    def info(self) -> DeviceInfo:
+        """The WN69LP's RS-485 and sampling configuration."""
+        return self._info
+
+    @property
+    def sensors(self) -> Sensors:
+        """The WN69LP's live weather readings."""
+        return self._sensors
 
     async def async_probe(self) -> None:
         """Check the readings at 0x180 are consistent with a WN69LP.

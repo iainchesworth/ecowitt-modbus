@@ -52,6 +52,36 @@ def test_every_model_declares_a_plausible_default_address(
 
 
 @MODELS
+@pytest.mark.parametrize("address", [1, 128, 252])
+async def test_every_model_accepts_a_valid_device_address(
+    model: type[EcowittDevice], unit: MockModbusUnit, address: int
+) -> None:
+    """Test the address validator lets through what the devices accept.
+
+    Both specifications document 1-252 as the settable range. Rejecting a
+    valid address would leave a user unable to move a device off a
+    conflicting one.
+    """
+    info = model(unit).info
+    await info.write("device_address", address)
+
+    # The two models keep this register at different addresses, so the
+    # write is checked where the component says it went.
+    register = info.resolved_fields["device_address"].address
+    assert unit.holding[register] == address
+
+
+@MODELS
+@pytest.mark.parametrize("address", [0, 253, 65535])
+async def test_every_model_rejects_an_invalid_device_address(
+    model: type[EcowittDevice], unit: MockModbusUnit, address: int
+) -> None:
+    """Test an unsettable address is refused before it reaches the wire."""
+    with pytest.raises(ValueError, match="between 1 and 252"):
+        await model(unit).info.write("device_address", address)
+
+
+@MODELS
 def test_every_model_exposes_the_readings_common_to_all_of_them(
     model: type[EcowittDevice], unit: MockModbusUnit
 ) -> None:

@@ -14,6 +14,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
+from modbus_connection.model import Component
+
 from .const import MANUFACTURER
 
 if TYPE_CHECKING:
@@ -47,6 +49,24 @@ class EcowittDevice(ABC):
     def __init__(self, unit: ModbusUnit) -> None:
         """Model the device answering on ``unit``."""
         self._unit = unit
+
+    @property
+    @abstractmethod
+    def info(self) -> Component:
+        """The device's identity and link settings.
+
+        Which fields this holds is model-specific; each model narrows the
+        return type to its own component.
+        """
+
+    @property
+    @abstractmethod
+    def sensors(self) -> Component:
+        """The device's live weather readings.
+
+        Which readings this holds is model-specific; each model narrows the
+        return type to its own component.
+        """
 
     @abstractmethod
     async def async_probe(self) -> None:
