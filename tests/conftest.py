@@ -1,9 +1,9 @@
-"""Fixtures: a WS90 over modbus-connection's in-memory mock backend.
+"""Fixtures: supported devices over modbus-connection's in-memory mock backend.
 
 The mock backend and its fixtures ship with ``modbus-connection``. They are
-imported explicitly below so the test suite does not depend on pytest entry-point
-autoloading. There is no real server, socket, or backend here -- just an
-address-keyed store loaded with WS90-shaped register values.
+imported explicitly below so the test suite does not depend on pytest
+entry-point autoloading. There is no real server, socket, or backend here --
+just an address-keyed store loaded with device-shaped register values.
 """
 
 from __future__ import annotations
@@ -15,22 +15,29 @@ from modbus_connection.pytest_plugin import (
     mock_modbus_unit as mock_modbus_unit,
 )
 
-from ecowitt_ws90_modbus import WS90
-from ecowitt_ws90_modbus.testing import WS90_LIVE_EXAMPLE
-
-
-@pytest.fixture
-def ws90(mock_modbus_unit: MockModbusUnit) -> WS90:
-    """A WS90 over the mock unit, preloaded with device values."""
-    mock_modbus_unit.holding.update(WS90_LIVE_EXAMPLE)
-    return WS90(mock_modbus_unit)
+from ecowitt_modbus import WN69LP, WS90
+from ecowitt_modbus.testing import WN69LP_LIVE_EXAMPLE, WS90_LIVE_EXAMPLE
 
 
 @pytest.fixture
 def unit(mock_modbus_unit: MockModbusUnit) -> MockModbusUnit:
-    """The mock unit the ``ws90`` fixture reads and writes through.
+    """The mock unit the device fixtures read and write through.
 
-    Request it alongside ``ws90`` to assert on the register store a write
+    Request it alongside a device to assert on the register store a write
     landed in, rather than reaching for the unit a component holds.
     """
     return mock_modbus_unit
+
+
+@pytest.fixture
+def ws90(unit: MockModbusUnit) -> WS90:
+    """A WS90 over the mock unit, preloaded with device values."""
+    unit.holding.update(WS90_LIVE_EXAMPLE)
+    return WS90(unit)
+
+
+@pytest.fixture
+def wn69lp(unit: MockModbusUnit) -> WN69LP:
+    """A WN69LP over the mock unit, preloaded with device values."""
+    unit.holding.update(WN69LP_LIVE_EXAMPLE)
+    return WN69LP(unit)

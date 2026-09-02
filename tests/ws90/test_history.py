@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from modbus_connection.mock import MockModbusUnit
 
-from ecowitt_ws90_modbus import WS90
+from ecowitt_modbus import WS90
 
 
 def _fill(unit: MockModbusUnit, start: int, values: list[int]) -> None:

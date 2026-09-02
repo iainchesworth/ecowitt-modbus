@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-"""Query a Fine Offset / Ecowitt WS90 over Modbus and print every value.
+"""Query a Fine Offset / Ecowitt sensor over Modbus and print every value.
 
-Connects over Modbus TCP (including RTU-over-TCP, the common way this sensor
-is bridged onto a network) or a serial/USB port, reads the whole device once,
-and dumps every value to the terminal. Handy for checking a real sensor
-without Home Assistant.
+Connects over Modbus TCP (including RTU-over-TCP, the common way these
+sensors are bridged onto a network) or a serial/USB port, reads the whole
+device once, and dumps every value to the terminal. Handy for checking a real
+sensor without Home Assistant.
 
 The library only needs the connection protocol; this script selects the
 tmodbus backend, so install the ``cli`` extra first.
@@ -26,11 +26,11 @@ from modbus_connection.cli_helper import (
     print_component,
 )
 
-from ecowitt_ws90_modbus import WS90
+from ecowitt_modbus import SUPPORTED_MODELS, WS90, EcowittDevice, NotThisDeviceError
 
-# The WS90 only ever speaks RTU framing, whether carried over TCP (a
-# transparent serial gateway, the common bridge for this sensor) or a direct
-# serial port.
+# These sensors only ever speak RTU framing, whether carried over TCP (a
+# transparent serial gateway, the common bridge for them) or a direct serial
+# port.
 _CONNECTIONS = (("tcp", "rtu"), ("tcp", "socket"), ("serial", "rtu"))
 
 
@@ -38,44 +38,68 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     add_connection_args(parser, connections=_CONNECTIONS)
     parser.add_argument(
+        "--model",
+        choices=sorted(SUPPORTED_MODELS),
+        default=WS90.MODEL,
+        help=f"sensor model to read (default: {WS90.MODEL})",
+    )
+    parser.add_argument(
         "--unit",
         type=int,
-        default=0x90,
-        help="Modbus unit/device address (default: 0x90, the WS90 factory default)",
+        default=None,
+        help="Modbus unit/device address (default: the model's factory default)",
     )
     parser.add_argument(
         "--history",
         action="store_true",
-        help="also read the last 30 minutes of archived per-minute readings",
+        help="also read the WS90's 30 minutes of archived per-minute readings",
     )
     return parser.parse_args(argv)
 
 
+async def _read(device: EcowittDevice, args: argparse.Namespace) -> None:
+    """Read everything the chosen model can report."""
+    await device.async_probe()
+    if isinstance(device, WS90):
+        if args.history:
+            await device.async_update_history()
+    elif args.history:
+        print(
+            f"--history is a WS90 feature; {device.MODEL} archives nothing.",
+            file=sys.stderr,
+        )
+
+
 async def _run(args: argparse.Namespace) -> int:
+    model = SUPPORTED_MODELS[args.model]
+    unit_id = model.DEFAULT_UNIT_ID if args.unit is None else args.unit
+
     try:
         connection = await connect_from_args(args)
     except ModbusError as err:
         print(f"Could not connect: {err}", file=sys.stderr)
         return 1
-    counting = CountingUnit(connection.for_unit(args.unit))
-    device = WS90(counting)
+
+    counting = CountingUnit(connection.for_unit(unit_id))
+    device = model(counting)
     elapsed = 0.0
     try:
         start = time.monotonic()
-        await device.async_update()
-        if args.history:
-            await device.async_update_history()
+        await _read(device, args)
         elapsed = time.monotonic() - start
+    except NotThisDeviceError as err:
+        print(f"That is not a {args.model}: {err}", file=sys.stderr)
+        return 1
     except ModbusError as err:
         print(f"Error reading device: {err}", file=sys.stderr)
         return 1
     finally:
         await connection.close()
 
-    print_component(device.info, title="Device")
+    print_component(device.info, title="Device")  # type: ignore[attr-defined]
     print()
-    print_component(device.sensors, title="Live readings")
-    if args.history:
+    print_component(device.sensors, title="Live readings")  # type: ignore[attr-defined]
+    if args.history and isinstance(device, WS90):
         print()
         print_component(device.history, title="History (last 30 minutes)")
     print(f"\nQueried in {elapsed * 1000:.0f} ms ({counting.reads} Modbus reads)")

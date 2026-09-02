@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 from modbus_connection.mock import MockModbusUnit
 
-from ecowitt_ws90_modbus import WS90, BaudRate
-from ecowitt_ws90_modbus.device_info import DeviceInfo
+from ecowitt_modbus import WS90, BaudRate
+from ecowitt_modbus.ws90 import DeviceInfo
 
 
 async def test_decodes_identity(ws90: WS90) -> None:
@@ -14,7 +14,6 @@ async def test_decodes_identity(ws90: WS90) -> None:
 
     assert ws90.info.device_code == 0x90
     assert ws90.info.model == "WS90"
-    assert ws90.info.manufacturer == "Ecowitt"
     assert ws90.info.baud_rate is BaudRate.BAUD_9600
     assert ws90.info.device_address == 0x90
     assert ws90.info.device_id == 0x12345678

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from modbus_connection.mock import MockModbusUnit
 
-from ecowitt_ws90_modbus import WS90
+from ecowitt_modbus import WS90
 
 
 async def test_decodes_live_readings(ws90: WS90) -> None:
