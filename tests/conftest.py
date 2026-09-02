@@ -16,35 +16,13 @@ from modbus_connection.pytest_plugin import (
 )
 
 from ecowitt_ws90_modbus import WS90
-
-# Raw register words keyed by their (protocol) address; decoded view inline.
-# The live-block values reproduce Example 2 of Ecowitt's WS90ModbusRTU_V1.0.6
-# spec verbatim, so they double as a cross-check against the manufacturer's
-# own worked example. The rain counter value reproduces that spec's own
-# worked example for register 0x16E.
-HOLDING: dict[int, int] = {
-    0x160: 0x90,  # device_code -> model "WS90"
-    0x161: 2,  # baud_rate -> BAUD_9600
-    0x162: 0x90,  # device_address (factory default)
-    0x163: 0x1234,  # device_id MSB
-    0x164: 0x5678,  # device_id LSB -> 0x12345678
-    0x165: 1767,  # light -> 17670 lux
-    0x166: 13,  # uv_index -> 1.3
-    0x167: 662,  # temperature -> 26.2 C
-    0x168: 60,  # humidity -> 60%
-    0x169: 0,  # wind_speed -> 0.0 m/s
-    0x16A: 0,  # gust_speed -> 0.0 m/s
-    0x16B: 150,  # wind_direction -> 150 deg
-    0x16C: 0,  # rainfall -> 0.0 mm
-    0x16D: 10010,  # absolute_pressure -> 1001.0 hPa
-    0x16E: 18,  # rain_counter -> 0.18 mm
-}
+from ecowitt_ws90_modbus.testing import WS90_LIVE_EXAMPLE
 
 
 @pytest.fixture
 def ws90(mock_modbus_unit: MockModbusUnit) -> WS90:
     """A WS90 over the mock unit, preloaded with device values."""
-    mock_modbus_unit.holding.update(HOLDING)
+    mock_modbus_unit.holding.update(WS90_LIVE_EXAMPLE)
     return WS90(mock_modbus_unit)
 
 
