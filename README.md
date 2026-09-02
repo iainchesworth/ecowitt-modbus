@@ -1,9 +1,13 @@
 # `ecowitt-ws90-modbus` Python library
 
 [![CI](https://github.com/iainchesworth/ecowitt-ws90-modbus/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/iainchesworth/ecowitt-ws90-modbus/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/iainchesworth/ecowitt-ws90-modbus.svg)](LICENSE)
+
+<!-- Not yet published to PyPI -- restore these once it is:
 [![PyPI](https://img.shields.io/pypi/v/ecowitt-ws90-modbus.svg)](https://pypi.org/project/ecowitt-ws90-modbus/)
 [![Python](https://img.shields.io/pypi/pyversions/ecowitt-ws90-modbus.svg)](https://pypi.org/project/ecowitt-ws90-modbus/)
-[![License](https://img.shields.io/github/license/iainchesworth/ecowitt-ws90-modbus.svg)](LICENSE)
+-->
+
 
 `ecowitt-ws90-modbus` is an asynchronous, transport-independent Python library for communicating with the **Fine Offset / Ecowitt WS90** all-in-one weather sensor array over Modbus RTU (including RTU-over-TCP, the common way this sensor is bridged onto a network).
 
